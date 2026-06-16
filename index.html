@@ -4,593 +4,719 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SYP Pipeline Showcase</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* ═══════════════ RESET & BASE ═══════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --blue:#3b82f6;--blue-l:#60a5fa;--amber:#f59e0b;--amber-l:#fbbf24;
-  --emerald:#10b981;--emerald-l:#34d399;--purple:#8b5cf6;--purple-l:#a78bfa;
-  --cyan:#06b6d4;--cyan-l:#22d3ee;
-}
 html{scroll-behavior:smooth}
-body{background:#0a0a0f;color:#fff;font-family:'Inter',sans-serif;overflow-x:hidden;line-height:1.6}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#0a0a0f;color:#fff;overflow-x:hidden;line-height:1.6}
+.mono{font-family:'JetBrains Mono','Courier New',monospace}
 
-/* ── Scroll Progress ─────────────────────────── */
-#scroll-progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--cyan),var(--emerald));width:0%;z-index:999;transition:width .05s linear}
+/* ═══════════════ SCROLL PROGRESS ═══════════════ */
+#scrollProgress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#3b82f6,#22d3ee,#34d399);z-index:9999;width:0%;transition:width .1s linear}
 
-/* ── Particles ───────────────────────────────── */
+/* ═══════════════ PARTICLES ═══════════════ */
 .particles{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
-.particle{position:absolute;border-radius:50%;background:rgba(59,130,246,.2);animation:float var(--d) ease-in-out infinite var(--del)}
-@keyframes float{0%,100%{transform:translateY(0);opacity:.1}50%{transform:translateY(-60px);opacity:.45}}
+.particle{position:absolute;border-radius:50%;background:rgba(59,130,246,.15)}
+@keyframes floatP{0%,100%{transform:translateY(0);opacity:.1}50%{transform:translateY(-70px);opacity:.45}}
 
-/* ── Reveal Animations ───────────────────────── */
-.reveal{opacity:0;transform:translateY(50px);transition:all .8s cubic-bezier(.25,.46,.45,.94)}
-.reveal.visible{opacity:1;transform:translateY(0)}
-.reveal-left{opacity:0;transform:translateX(-80px);transition:all .8s cubic-bezier(.25,.46,.45,.94)}
-.reveal-left.visible{opacity:1;transform:translateX(0)}
-.reveal-right{opacity:0;transform:translateX(80px);transition:all .8s cubic-bezier(.25,.46,.45,.94)}
-.reveal-right.visible{opacity:1;transform:translateX(0)}
-.reveal-scale{opacity:0;transform:scale(.9);transition:all .7s cubic-bezier(.25,.46,.45,.94)}
-.reveal-scale.visible{opacity:1;transform:scale(1)}
+/* ═══════════════ REVEAL ANIMATIONS ═══════════════ */
+.reveal{opacity:0;transform:translateY(50px);transition:opacity .8s ease,transform .8s ease}
+.reveal.active{opacity:1;transform:translateY(0)}
+.reveal-left{opacity:0;transform:translateX(-80px);transition:opacity .8s ease,transform .8s ease}
+.reveal-left.active{opacity:1;transform:translateX(0)}
+.reveal-right{opacity:0;transform:translateX(80px);transition:opacity .8s ease,transform .8s ease}
+.reveal-right.active{opacity:1;transform:translateX(0)}
+.reveal-scale{opacity:0;transform:scale(.9);transition:opacity .8s ease,transform .8s ease}
+.reveal-scale.active{opacity:1;transform:scale(1)}
 
-/* ── Hero ─────────────────────────────────────── */
+/* ═══════════════ HERO ═══════════════ */
 .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;position:relative;z-index:1}
-.hero-inner{transition:transform .1s,opacity .1s}
-.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(59,130,246,.12),transparent 70%);pointer-events:none}
-.badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:9999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-size:11px;color:#9ca3af;font-family:'JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
-.badge svg{width:14px;height:14px;color:var(--amber-l)}
-.hero h1{font-size:clamp(3rem,8vw,7rem);font-weight:800;letter-spacing:-.03em;background:linear-gradient(180deg,#fff 0%,rgba(255,255,255,.4) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;line-height:1.1}
-.hero .subtitle{font-size:clamp(1rem,2.5vw,1.25rem);color:#9ca3af;max-width:640px;margin:0 auto 12px;line-height:1.7}
-.hero .tech-line{font-size:13px;color:#4b5563;font-family:'JetBrains Mono',monospace;margin-bottom:48px}
-.stats{display:flex;flex-wrap:wrap;justify-content:center;gap:40px;margin-bottom:60px}
-.stat-value{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:700;background:linear-gradient(135deg,var(--blue-l),var(--cyan-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.stat-label{font-size:11px;color:#6b7280;margin-top:4px;text-transform:uppercase;letter-spacing:1.5px}
-.scroll-indicator{display:flex;flex-direction:column;align-items:center;gap:8px;color:#4b5563;animation:bounce-down 2s infinite}
-.scroll-indicator span{font-size:11px;letter-spacing:3px;text-transform:uppercase}
-@keyframes bounce-down{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
+.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(59,130,246,.12),transparent 70%);border-radius:50%;pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-size:.7rem;color:#9ca3af;letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.5rem}
+.hero-badge svg{width:14px;height:14px;color:#fbbf24}
+.hero-title{font-size:clamp(3rem,8vw,7rem);font-weight:800;letter-spacing:-.03em;background:linear-gradient(180deg,#fff 30%,rgba(255,255,255,.35));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;margin-bottom:.75rem}
+.hero-sub{font-size:clamp(1rem,2vw,1.25rem);color:#9ca3af;max-width:640px;margin:0 auto 1rem}
+.hero-tech{font-size:.8rem;color:#374151;margin-bottom:3rem}
+.stats{display:flex;flex-wrap:wrap;justify-content:center;gap:2rem 4rem;margin-bottom:3rem}
+.stat-value{font-size:clamp(1.8rem,3vw,2.5rem);font-weight:800;background:linear-gradient(90deg,#60a5fa,#22d3ee);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-size:.65rem;color:#6b7280;text-transform:uppercase;letter-spacing:.12em;margin-top:2px}
+.scroll-hint{color:#4b5563;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:6px}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+.scroll-hint svg{animation:bounce 2s infinite ease-in-out}
 
-/* ── Pipeline Overview ────────────────────────── */
-.pipeline-section{padding:96px 16px;position:relative;z-index:1}
-.pipeline-section .section-title{text-align:center;margin-bottom:60px}
-.pipeline-section h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:700;margin-bottom:12px}
-.pipeline-section .section-sub{color:#6b7280;max-width:480px;margin:0 auto}
-.pipeline-flow{display:flex;align-items:center;justify-content:space-between;max-width:900px;margin:0 auto;position:relative;flex-wrap:wrap;gap:20px}
-.pipeline-flow::before{content:'';position:absolute;top:50%;left:10%;right:10%;height:1px;background:linear-gradient(90deg,rgba(59,130,246,.3),rgba(245,158,11,.3),rgba(16,185,129,.3),rgba(139,92,246,.3),rgba(6,182,212,.3));z-index:0;display:none}
-@media(min-width:768px){.pipeline-flow::before{display:block}.pipeline-flow{flex-wrap:nowrap;gap:0}}
-.pipeline-step{display:flex;flex-direction:column;align-items:center;position:relative;z-index:1;flex:1}
-.pipeline-icon{width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;transition:transform .3s,box-shadow .3s;cursor:pointer}
-.pipeline-icon:hover{transform:scale(1.1) translateY(-4px)}
-.pipeline-icon svg{width:28px;height:28px}
-.pipeline-step span{font-size:12px;color:#9ca3af;font-weight:500}
+/* ═══════════════ PIPELINE OVERVIEW ═══════════════ */
+.pipeline-section{padding:6rem 1rem;position:relative;z-index:1}
+.pipeline-section h2{text-align:center;font-size:clamp(1.5rem,3vw,2.2rem);font-weight:700;margin-bottom:.75rem}
+.pipeline-section .sub{text-align:center;color:#6b7280;max-width:500px;margin:0 auto 3rem;font-size:.95rem}
+.pipeline-row{display:flex;align-items:center;justify-content:center;gap:1rem;position:relative;flex-wrap:wrap;max-width:900px;margin:0 auto}
+.pipeline-line{display:none}
+@media(min-width:768px){.pipeline-line{display:block;position:absolute;top:50%;left:12%;right:12%;height:2px;background:linear-gradient(90deg,rgba(59,130,246,.35),rgba(245,158,11,.35),rgba(16,185,129,.35),rgba(139,92,246,.35),rgba(6,182,212,.35));z-index:0}}
+.pip-step{display:flex;flex-direction:column;align-items:center;position:relative;z-index:1;cursor:pointer;transition:transform .3s}
+.pip-step:hover{transform:translateY(-4px) scale(1.05)}
+.pip-icon{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin-bottom:.5rem;transition:box-shadow .3s}
+.pip-step:hover .pip-icon{box-shadow:0 0 30px rgba(255,255,255,.1)}
+.pip-label{font-size:.72rem;color:#9ca3af;font-weight:500}
 
-/* ── Stage Sections ──────────────────────────── */
-.stage-section{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:96px 16px;position:relative;z-index:1}
-.stage-grid{display:grid;grid-template-columns:1fr;gap:48px;max-width:1100px;width:100%;margin:0 auto;align-items:center}
-@media(min-width:768px){.stage-grid{grid-template-columns:1fr 1fr;gap:64px}}
-.stage-badge{display:inline-block;padding:4px 14px;border-radius:9999px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
-.stage-content h2{font-size:clamp(2rem,5vw,3rem);font-weight:700;margin-bottom:8px;line-height:1.15}
-.stage-content .stage-subtitle{font-size:1.1rem;font-weight:500;margin-bottom:16px}
-.stage-content .stage-desc{color:#9ca3af;font-size:.95rem;line-height:1.7;margin-bottom:32px}
-.stage-details{display:flex;flex-direction:column;gap:12px}
-.stage-detail{display:flex;align-items:flex-start;gap:12px}
-.stage-detail .check{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
-.stage-detail .check svg{width:12px;height:12px}
-.stage-detail span{color:#d1d5db;font-size:.875rem;line-height:1.6}
+/* ═══════════════ FILE JOURNEY TRACKER ═══════════════ */
+.journey-tracker{position:sticky;top:10px;z-index:100;display:flex;justify-content:center;padding:1rem;margin-bottom:2rem}
+.journey-bar{display:flex;align-items:center;gap:0;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:999px;padding:6px 8px;backdrop-filter:blur(12px)}
+.journey-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#6b7280;border:2px solid rgba(255,255,255,.08);transition:all .5s ease;position:relative}
+.journey-dot.active{color:#fff;border-color:currentColor;box-shadow:0 0 15px rgba(255,255,255,.15)}
+.journey-dot.active.s1{color:#60a5fa;background:rgba(59,130,246,.15);border-color:#3b82f6}
+.journey-dot.active.s2{color:#fbbf24;background:rgba(245,158,11,.15);border-color:#f59e0b}
+.journey-dot.active.s3{color:#34d399;background:rgba(16,185,129,.15);border-color:#10b981}
+.journey-dot.active.s4{color:#a78bfa;background:rgba(139,92,246,.15);border-color:#8b5cf6}
+.journey-dot.active.s5{color:#22d3ee;background:rgba(6,182,212,.15);border-color:#06b6d4}
+.journey-connector{width:28px;height:2px;background:rgba(255,255,255,.08);transition:background .5s}
+.journey-connector.active{background:linear-gradient(90deg,var(--jc-from),var(--jc-to))}
 
-/* Visual Card */
+/* ═══════════════ STAGES ═══════════════ */
+.stage-section{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:5rem 1rem;position:relative;z-index:1}
+.stage-grid{display:grid;grid-template-columns:1fr;gap:3rem;max-width:1100px;width:100%;margin:0 auto;align-items:center}
+@media(min-width:768px){.stage-grid{grid-template-columns:1fr 1fr}}
+.stage-badge{display:inline-block;padding:4px 14px;border-radius:999px;font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;margin-bottom:1rem}
+.stage-title{font-size:clamp(2rem,4vw,3rem);font-weight:800;color:#fff;margin-bottom:.5rem;line-height:1.15}
+.stage-subtitle{font-size:1.05rem;font-weight:600;margin-bottom:1rem}
+.stage-desc{color:#9ca3af;font-size:.95rem;margin-bottom:2rem;line-height:1.7}
+.stage-details{list-style:none;display:flex;flex-direction:column;gap:.65rem}
+.stage-details li{display:flex;align-items:flex-start;gap:10px;color:#d1d5db;font-size:.85rem;line-height:1.5}
+.stage-details li .check{flex-shrink:0;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.stage-details li .check svg{width:10px;height:10px}
+
+/* ═══ STAGE VISUAL CARD ═══ */
 .stage-visual{position:relative}
-.stage-visual .glow{position:absolute;inset:0;border-radius:24px;filter:blur(40px);opacity:.5}
-.visual-card{position:relative;border-radius:24px;padding:32px;border:1px solid;backdrop-filter:blur(16px)}
-.visual-card .icon-wrap{width:80px;height:80px;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;animation:icon-float 4s ease-in-out infinite}
-@keyframes icon-float{0%,100%{transform:rotate(0) scale(1)}25%{transform:rotate(5deg) scale(1.05)}75%{transform:rotate(-5deg) scale(1)}}
-.visual-card .icon-wrap svg{width:40px;height:40px}
-.progress-bars{display:flex;flex-direction:column;gap:12px}
-.progress-bar{height:8px;border-radius:9999px;overflow:hidden;border:1px solid}
-.progress-bar .fill{height:100%;border-radius:9999px;width:0%;transition:width 1.2s ease-out}
-.progress-bar.visible .fill{width:var(--w)}
-.status-dot{display:flex;align-items:center;gap:8px;margin-top:24px}
-.status-dot .dot{width:8px;height:8px;border-radius:50%;background:#34d399;animation:pulse-dot 2s infinite}
-@keyframes pulse-dot{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
-.status-dot span{font-size:11px;color:#6b7280;font-family:'JetBrains Mono',monospace}
+.stage-visual .glow{position:absolute;inset:0;border-radius:24px;filter:blur(50px);opacity:.4}
+.stage-card{position:relative;border-radius:24px;padding:2rem;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);backdrop-filter:blur(8px);overflow:hidden}
 
-/* ── Flow Connector ──────────────────────────── */
-.flow-connector{display:flex;flex-direction:column;align-items:center;padding:16px 0;position:relative;z-index:1}
-.connector-line{width:1px;background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.05));overflow:hidden}
-.connector-line.visible{height:80px;transition:height .8s ease-out}
-.connector-pill{padding:6px 16px;border-radius:9999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-size:11px;color:#9ca3af;font-family:'JetBrains Mono',monospace;margin:8px 0;opacity:0;transform:scale(0);transition:all .5s .5s}
-.connector-pill.visible{opacity:1;transform:scale(1)}
-.connector-chevron{opacity:0;transition:opacity .3s .8s}
-.connector-chevron.visible{opacity:1}
-.connector-chevron svg{width:16px;height:16px;color:rgba(255,255,255,.2)}
+/* ═══ MINI EXCEL SPREADSHEET ═══ */
+.mini-excel{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.4);margin-top:1rem}
+.excel-titlebar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.08);font-size:.65rem;color:#9ca3af}
+.excel-titlebar .dots{display:flex;gap:4px}
+.excel-titlebar .dots span{width:8px;height:8px;border-radius:50%}
+.excel-filename{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.6rem;opacity:.7}
+.excel-table{width:100%;border-collapse:collapse;font-size:.6rem;table-layout:fixed}
+.excel-table th{padding:6px 8px;text-align:left;background:rgba(255,255,255,.06);color:#9ca3af;font-weight:600;border-bottom:1px solid rgba(255,255,255,.08);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.excel-table td{padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.04);color:#d1d5db;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}
+.excel-row{opacity:0;transform:translateX(30px);transition:all .5s ease}
+.excel-row.show{opacity:1;transform:translateX(0)}
 
-/* ── Tech Stack ──────────────────────────────── */
-.tech-section{padding:96px 16px;position:relative;z-index:1}
-.tech-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:1000px;margin:0 auto}
+/* Stage 1: rows slide in */
+.s1-anim .excel-row:nth-child(1){transition-delay:.2s}
+.s1-anim .excel-row:nth-child(2){transition-delay:.35s}
+.s1-anim .excel-row:nth-child(3){transition-delay:.5s}
+.s1-anim .excel-row:nth-child(4){transition-delay:.65s}
+.s1-anim .excel-row:nth-child(5){transition-delay:.8s}
+
+/* Stage 2: scanning highlight */
+@keyframes scanRow{0%{background:transparent}50%{background:rgba(245,158,11,.12)}100%{background:transparent}}
+.s2-anim .excel-row.show{opacity:1;transform:translateX(0)}
+.s2-anim .excel-row:nth-child(1).show{animation:scanRow 1.2s .3s ease}
+.s2-anim .excel-row:nth-child(2).show{animation:scanRow 1.2s .6s ease}
+.s2-anim .excel-row:nth-child(3).show{animation:scanRow 1.2s .9s ease}
+.s2-anim .excel-row:nth-child(4).show{animation:scanRow 1.2s 1.2s ease}
+.s2-anim .excel-row:nth-child(5).show{animation:scanRow 1.2s 1.5s ease}
+.col-highlight{position:relative}
+@keyframes colGlow{0%{box-shadow:none}50%{box-shadow:inset 0 0 12px rgba(245,158,11,.2)}100%{box-shadow:none}}
+.s2-anim .excel-table th{animation:colGlow 2s 1s ease infinite}
+
+/* Stage 3: validation marks */
+.val-mark{display:inline-block;opacity:0;transform:scale(0);transition:all .4s cubic-bezier(.68,-.55,.265,1.55)}
+.val-mark.show{opacity:1;transform:scale(1)}
+.val-pass{color:#34d399;font-weight:700}
+.val-warn{color:#f59e0b;font-weight:700}
+.val-fail{color:#ef4444;font-weight:700}
+.validated-stamp{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-15deg) scale(0);font-size:1.8rem;font-weight:900;letter-spacing:.1em;color:rgba(16,185,129,.25);border:3px solid rgba(16,185,129,.2);border-radius:12px;padding:4px 20px;opacity:0;transition:all .6s cubic-bezier(.68,-.55,.265,1.55);pointer-events:none;z-index:5}
+.validated-stamp.show{transform:translate(-50%,-50%) rotate(-15deg) scale(1);opacity:1}
+
+/* Stage 4: dissolve particles */
+@keyframes dissolveUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-40px) scale(.5)}}
+.s4-anim .excel-row.dissolve{animation:dissolveUp .8s forwards}
+.s4-anim .excel-row:nth-child(5).dissolve{animation-delay:.1s}
+.s4-anim .excel-row:nth-child(4).dissolve{animation-delay:.3s}
+.s4-anim .excel-row:nth-child(3).dissolve{animation-delay:.5s}
+.s4-anim .excel-row:nth-child(2).dissolve{animation-delay:.7s}
+.s4-anim .excel-row:nth-child(1).dissolve{animation-delay:.9s}
+.data-particles{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden}
+.data-particle{position:absolute;width:4px;height:4px;border-radius:50%;background:#a78bfa;opacity:0}
+@keyframes particleUp{0%{opacity:0;transform:translateY(0)}20%{opacity:.8}100%{opacity:0;transform:translateY(-120px) translateX(var(--px))}}
+.s4-anim.triggered .data-particle{animation:particleUp 1.5s ease forwards}
+
+/* Stage 5: chart morph */
+.chart-container{display:none;gap:12px;align-items:flex-end;height:100px;padding:12px;justify-content:center}
+.chart-container.show{display:flex}
+.chart-bar{width:24px;border-radius:6px 6px 0 0;transition:height 1s cubic-bezier(.34,1.56,.64,1)}
+.chart-bar:nth-child(1){background:linear-gradient(180deg,#22d3ee,rgba(6,182,212,.3));height:0}
+.chart-bar:nth-child(2){background:linear-gradient(180deg,#06b6d4,rgba(6,182,212,.3));height:0}
+.chart-bar:nth-child(3){background:linear-gradient(180deg,#22d3ee,rgba(6,182,212,.3));height:0}
+.chart-bar:nth-child(4){background:linear-gradient(180deg,#06b6d4,rgba(6,182,212,.3));height:0}
+.chart-bar:nth-child(5){background:linear-gradient(180deg,#22d3ee,rgba(6,182,212,.3));height:0}
+.chart-bar:nth-child(6){background:linear-gradient(180deg,#06b6d4,rgba(6,182,212,.3));height:0}
+.chart-container.show .chart-bar:nth-child(1){height:55px;transition-delay:.2s}
+.chart-container.show .chart-bar:nth-child(2){height:78px;transition-delay:.35s}
+.chart-container.show .chart-bar:nth-child(3){height:42px;transition-delay:.5s}
+.chart-container.show .chart-bar:nth-child(4){height:90px;transition-delay:.65s}
+.chart-container.show .chart-bar:nth-child(5){height:66px;transition-delay:.8s}
+.chart-container.show .chart-bar:nth-child(6){height:85px;transition-delay:.95s}
+.mini-line-chart{display:none;margin-top:8px;padding:0 12px}
+.mini-line-chart.show{display:block}
+.mini-line-chart svg{width:100%;height:40px}
+.line-path{stroke-dasharray:300;stroke-dashoffset:300;transition:stroke-dashoffset 2s ease .5s}
+.mini-line-chart.show .line-path{stroke-dashoffset:0}
+.chart-labels{display:none;justify-content:space-around;padding:0 12px;margin-top:4px}
+.chart-labels.show{display:flex}
+.chart-labels span{font-size:.5rem;color:#6b7280}
+
+/* ═══ PULSING DOT ═══ */
+.pulse-dot{width:8px;height:8px;border-radius:50%;background:#34d399;display:inline-block}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.6}}
+.pulse-dot{animation:pulse 2s infinite ease-in-out}
+.stage-status{display:flex;align-items:center;gap:8px;margin-top:1.2rem;font-size:.7rem;color:#6b7280}
+
+/* ═══════════════ FLOW CONNECTORS ═══════════════ */
+.flow-connector{display:flex;flex-direction:column;align-items:center;padding:1rem 0;position:relative;z-index:1}
+.fc-line{width:2px;height:0;background:linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,.03));transition:height 1s ease}
+.fc-line.active{height:80px}
+.fc-pill{padding:4px 16px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:.7rem;color:#6b7280;margin:8px 0;opacity:0;transform:scale(.8);transition:all .5s ease .5s}
+.fc-pill.active{opacity:1;transform:scale(1)}
+
+/* ═══════════════ TECH STACK ═══════════════ */
+.tech-section{padding:6rem 1rem;position:relative;z-index:1}
+.tech-section h2{text-align:center;font-size:clamp(1.5rem,3vw,2.2rem);font-weight:700;margin-bottom:.5rem}
+.tech-section .sub{text-align:center;color:#6b7280;margin:0 auto 3rem;font-size:.95rem}
+.tech-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;max-width:900px;margin:0 auto}
 @media(min-width:768px){.tech-grid{grid-template-columns:repeat(4,1fr)}}
-.glow-card{position:relative;cursor:pointer}
-.glow-card .glow-bg{position:absolute;inset:-2px;background:linear-gradient(135deg,rgba(59,130,246,.3),rgba(6,182,212,.3));border-radius:18px;filter:blur(12px);opacity:0;transition:opacity .5s}
-.glow-card:hover .glow-bg{opacity:1}
-.glow-card .card-inner{position:relative;background:rgba(255,255,255,.04);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px;transition:border-color .5s}
-.glow-card:hover .card-inner{border-color:rgba(255,255,255,.15)}
-.glow-card svg{width:32px;height:32px;color:var(--blue-l);margin-bottom:12px}
-.glow-card h4{color:#fff;font-size:.875rem;font-weight:600;margin-bottom:4px}
-.glow-card p{color:#6b7280;font-size:.75rem}
+.tech-card{position:relative;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:1.5rem;transition:all .4s ease;cursor:pointer}
+.tech-card:hover{border-color:rgba(255,255,255,.15);transform:translateY(-4px);box-shadow:0 0 40px rgba(59,130,246,.08)}
+.tech-card svg{width:30px;height:30px;color:#60a5fa;margin-bottom:.75rem}
+.tech-card h4{color:#fff;font-size:.85rem;font-weight:600;margin-bottom:.25rem}
+.tech-card p{color:#6b7280;font-size:.72rem;line-height:1.4}
 
-/* ── Impact ──────────────────────────────────── */
-.impact-section{padding:96px 16px;position:relative;z-index:1}
-.impact-grid{display:grid;grid-template-columns:1fr;gap:24px;max-width:1000px;margin:0 auto}
+/* ═══════════════ IMPACT ═══════════════ */
+.impact-section{padding:6rem 1rem;position:relative;z-index:1}
+.impact-section h2{text-align:center;font-size:clamp(1.5rem,3vw,2.2rem);font-weight:700;margin-bottom:.5rem}
+.impact-section .sub{text-align:center;color:#6b7280;margin:0 auto 3rem;font-size:.95rem}
+.impact-grid{display:grid;grid-template-columns:1fr;gap:1.5rem;max-width:900px;margin:0 auto}
 @media(min-width:768px){.impact-grid{grid-template-columns:repeat(3,1fr)}}
-.impact-value{font-size:3rem;font-weight:700;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
-.impact-card h4{color:#fff;font-weight:600;margin-bottom:8px}
-.impact-card p{color:#6b7280;font-size:.875rem;line-height:1.6}
+.impact-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:2rem;transition:all .4s;cursor:pointer}
+.impact-card:hover{border-color:rgba(255,255,255,.12);transform:translateY(-4px)}
+.impact-value{font-size:3rem;font-weight:800;line-height:1;margin-bottom:.5rem}
+.impact-label{color:#fff;font-weight:600;font-size:.95rem;margin-bottom:.5rem}
+.impact-desc{color:#6b7280;font-size:.82rem;line-height:1.6}
 
-/* ── Footer ──────────────────────────────────── */
-footer{padding:64px 16px;border-top:1px solid rgba(255,255,255,.05);text-align:center;position:relative;z-index:1}
-footer p{color:#4b5563;font-size:.875rem}
-footer .mono{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#374151;margin-top:8px}
+/* ═══════════════ FOOTER ═══════════════ */
+footer{padding:4rem 1rem;border-top:1px solid rgba(255,255,255,.05);text-align:center;position:relative;z-index:1}
+footer p{color:#374151;font-size:.8rem}
+footer .mono{font-size:.7rem;margin-top:.5rem;color:#1f2937}
 
-/* ── Color Utilities ─────────────────────────── */
-.c-blue .stage-badge{background:rgba(59,130,246,.2);color:#93c5fd}
-.c-blue .stage-subtitle{color:var(--blue-l)}
-.c-blue .check{background:rgba(59,130,246,.15)}
-.c-blue .check svg{color:var(--blue-l)}
-.c-blue .glow{background:linear-gradient(135deg,rgba(59,130,246,.2),rgba(59,130,246,.05))}
-.c-blue .visual-card{background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(59,130,246,.04));border-color:rgba(59,130,246,.25)}
-.c-blue .icon-wrap{background:rgba(59,130,246,.15)}
-.c-blue .icon-wrap svg{color:var(--blue-l)}
-.c-blue .progress-bar{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.15)}
-.c-blue .progress-bar .fill{background:linear-gradient(90deg,rgba(59,130,246,.3),rgba(59,130,246,.1))}
-
-.c-amber .stage-badge{background:rgba(245,158,11,.2);color:#fcd34d}
-.c-amber .stage-subtitle{color:var(--amber-l)}
-.c-amber .check{background:rgba(245,158,11,.15)}
-.c-amber .check svg{color:var(--amber-l)}
-.c-amber .glow{background:linear-gradient(135deg,rgba(245,158,11,.2),rgba(245,158,11,.05))}
-.c-amber .visual-card{background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(245,158,11,.04));border-color:rgba(245,158,11,.25)}
-.c-amber .icon-wrap{background:rgba(245,158,11,.15)}
-.c-amber .icon-wrap svg{color:var(--amber-l)}
-.c-amber .progress-bar{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.15)}
-.c-amber .progress-bar .fill{background:linear-gradient(90deg,rgba(245,158,11,.3),rgba(245,158,11,.1))}
-
-.c-emerald .stage-badge{background:rgba(16,185,129,.2);color:#6ee7b7}
-.c-emerald .stage-subtitle{color:var(--emerald-l)}
-.c-emerald .check{background:rgba(16,185,129,.15)}
-.c-emerald .check svg{color:var(--emerald-l)}
-.c-emerald .glow{background:linear-gradient(135deg,rgba(16,185,129,.2),rgba(16,185,129,.05))}
-.c-emerald .visual-card{background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(16,185,129,.04));border-color:rgba(16,185,129,.25)}
-.c-emerald .icon-wrap{background:rgba(16,185,129,.15)}
-.c-emerald .icon-wrap svg{color:var(--emerald-l)}
-.c-emerald .progress-bar{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.15)}
-.c-emerald .progress-bar .fill{background:linear-gradient(90deg,rgba(16,185,129,.3),rgba(16,185,129,.1))}
-
-.c-purple .stage-badge{background:rgba(139,92,246,.2);color:#c4b5fd}
-.c-purple .stage-subtitle{color:var(--purple-l)}
-.c-purple .check{background:rgba(139,92,246,.15)}
-.c-purple .check svg{color:var(--purple-l)}
-.c-purple .glow{background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(139,92,246,.05))}
-.c-purple .visual-card{background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(139,92,246,.04));border-color:rgba(139,92,246,.25)}
-.c-purple .icon-wrap{background:rgba(139,92,246,.15)}
-.c-purple .icon-wrap svg{color:var(--purple-l)}
-.c-purple .progress-bar{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.15)}
-.c-purple .progress-bar .fill{background:linear-gradient(90deg,rgba(139,92,246,.3),rgba(139,92,246,.1))}
-
-.c-cyan .stage-badge{background:rgba(6,182,212,.2);color:#67e8f9}
-.c-cyan .stage-subtitle{color:var(--cyan-l)}
-.c-cyan .check{background:rgba(6,182,212,.15)}
-.c-cyan .check svg{color:var(--cyan-l)}
-.c-cyan .glow{background:linear-gradient(135deg,rgba(6,182,212,.2),rgba(6,182,212,.05))}
-.c-cyan .visual-card{background:linear-gradient(135deg,rgba(6,182,212,.12),rgba(6,182,212,.04));border-color:rgba(6,182,212,.25)}
-.c-cyan .icon-wrap{background:rgba(6,182,212,.15)}
-.c-cyan .icon-wrap svg{color:var(--cyan-l)}
-.c-cyan .progress-bar{background:rgba(6,182,212,.08);border-color:rgba(6,182,212,.15)}
-.c-cyan .progress-bar .fill{background:linear-gradient(90deg,rgba(6,182,212,.3),rgba(6,182,212,.1))}
-
-.order-swap .stage-content{order:2}
-.order-swap .stage-visual{order:1}
-@media(max-width:767px){.order-swap .stage-content{order:1}.order-swap .stage-visual{order:2}}
+/* ═══════════════ ORDER SWAP FOR ALT LAYOUT ═══════════════ */
+@media(min-width:768px){
+.stage-section:nth-of-type(even) .stage-grid .stage-content{order:2}
+.stage-section:nth-of-type(even) .stage-grid .stage-visual{order:1}
+}
 </style>
 </head>
 <body>
 
-<!-- Scroll Progress -->
-<div id="scroll-progress"></div>
+<!-- SCROLL PROGRESS -->
+<div id="scrollProgress"></div>
 
-<!-- Particles -->
+<!-- PARTICLES -->
 <div class="particles" id="particles"></div>
 
-<!-- ═══════════════ HERO ═══════════════ -->
+<!-- ═══════════ HERO ═══════════ -->
 <section class="hero" id="hero">
   <div class="hero-glow"></div>
-  <div class="hero-inner" id="hero-inner">
-    <div class="badge reveal">
+  <div class="reveal" style="position:relative;z-index:1">
+    <div class="hero-badge">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       SUPPLY CHAIN AUTOMATION
     </div>
-    <h1 class="reveal">SYP Pipeline</h1>
-    <p class="subtitle reveal">Automated Supplier Yield Plan ingestion — from SharePoint pickup to Snowflake, with AI-powered validation at every step.</p>
-    <p class="tech-line reveal">Built with Power Automate · Office Scripts · Copilot Studio · Snowflake</p>
-
-    <div class="stats reveal">
-      <div style="text-align:center"><div class="stat-value"><span class="counter" data-end="10">0</span>+</div><div class="stat-label">Supplier Sites</div></div>
-      <div style="text-align:center"><div class="stat-value"><span class="counter" data-end="95">0</span>%</div><div class="stat-label">Automation Rate</div></div>
-      <div style="text-align:center"><div class="stat-value"><span class="counter" data-end="6">0</span>hrs</div><div class="stat-label">Saved per Cycle</div></div>
-      <div style="text-align:center"><div class="stat-value"><span class="counter" data-end="15">0</span>+</div><div class="stat-label">Validations</div></div>
+    <h1 class="hero-title">SYP Pipeline</h1>
+    <p class="hero-sub">Automated Supplier Yield Plan ingestion — from SharePoint pickup to Snowflake, with AI-powered validation at every step.</p>
+    <p class="hero-tech mono">Built with Power Automate · Office Scripts · Copilot Studio · Snowflake</p>
+    <div class="stats">
+      <div><div class="stat-value"><span class="counter" data-end="10">0</span>+</div><div class="stat-label">Supplier Sites</div></div>
+      <div><div class="stat-value"><span class="counter" data-end="95">0</span>%</div><div class="stat-label">Automation Rate</div></div>
+      <div><div class="stat-value"><span class="counter" data-end="6">0</span>hrs</div><div class="stat-label">Saved per Cycle</div></div>
+      <div><div class="stat-value"><span class="counter" data-end="15">0</span>+</div><div class="stat-label">Validations</div></div>
     </div>
-
-    <div class="scroll-indicator reveal">
-      <span>Scroll to explore</span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+    <div class="scroll-hint">
+      SCROLL TO EXPLORE
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════ PIPELINE OVERVIEW ═══════════════ -->
+<!-- ═══════════ PIPELINE OVERVIEW ═══════════ -->
 <section class="pipeline-section">
-  <div class="section-title reveal">
+  <div class="reveal">
     <h2>End-to-End Pipeline</h2>
-    <p class="section-sub">A fully automated data pipeline that transforms raw supplier files into actionable insights.</p>
+    <p class="sub">A fully automated data pipeline that transforms raw supplier files into actionable insights.</p>
   </div>
-  <div class="pipeline-flow">
-    <div class="pipeline-step reveal-scale" style="transition-delay:.1s">
-      <div class="pipeline-icon" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><path d="M2 10h20"/></svg>
+  <div class="pipeline-row reveal">
+    <div class="pipeline-line"></div>
+    <div class="pip-step">
+      <div class="pip-icon" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25)">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
       </div>
-      <span>SharePoint</span>
+      <span class="pip-label">SharePoint</span>
     </div>
-    <div class="pipeline-step reveal-scale" style="transition-delay:.25s">
-      <div class="pipeline-icon" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    <div class="pip-step">
+      <div class="pip-icon" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       </div>
-      <span>Power Automate</span>
+      <span class="pip-label">Power Automate</span>
     </div>
-    <div class="pipeline-step reveal-scale" style="transition-delay:.4s">
-      <div class="pipeline-icon" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+    <div class="pip-step">
+      <div class="pip-icon" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25)">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
       </div>
-      <span>Validation</span>
+      <span class="pip-label">Validation</span>
     </div>
-    <div class="pipeline-step reveal-scale" style="transition-delay:.55s">
-      <div class="pipeline-icon" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+    <div class="pip-step">
+      <div class="pip-icon" style="background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.25)">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
       </div>
-      <span>Snowflake</span>
+      <span class="pip-label">Snowflake</span>
     </div>
-    <div class="pipeline-step reveal-scale" style="transition-delay:.7s">
-      <div class="pipeline-icon" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.25)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    <div class="pip-step">
+      <div class="pip-icon" style="background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.25)">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       </div>
-      <span>Dashboards</span>
+      <span class="pip-label">Dashboards</span>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════ STAGE 01 ═══════════════ -->
-<div class="flow-connector"><div class="connector-line" data-anim="line"></div></div>
+<!-- ═══════════ FILE JOURNEY TRACKER ═══════════ -->
+<div class="journey-tracker" id="journeyTracker">
+  <div class="journey-bar">
+    <div class="journey-dot s1" id="jd1">01</div>
+    <div class="journey-connector" id="jc1" style="--jc-from:#3b82f6;--jc-to:#f59e0b"></div>
+    <div class="journey-dot s2" id="jd2">02</div>
+    <div class="journey-connector" id="jc2" style="--jc-from:#f59e0b;--jc-to:#10b981"></div>
+    <div class="journey-dot s3" id="jd3">03</div>
+    <div class="journey-connector" id="jc3" style="--jc-from:#10b981;--jc-to:#8b5cf6"></div>
+    <div class="journey-dot s4" id="jd4">04</div>
+    <div class="journey-connector" id="jc4" style="--jc-from:#8b5cf6;--jc-to:#06b6d4"></div>
+    <div class="journey-dot s5" id="jd5">05</div>
+  </div>
+</div>
 
-<section class="stage-section c-blue">
+<!-- ═══════════ STAGE 01 — FILE PICKUP ═══════════ -->
+<section class="stage-section" id="stage1" data-stage="1">
   <div class="stage-grid">
     <div class="stage-content reveal-left">
-      <span class="stage-badge">Stage 01</span>
-      <h2>File Pickup</h2>
-      <p class="stage-subtitle">Supplier SharePoint Integration</p>
+      <span class="stage-badge" style="background:rgba(59,130,246,.15);color:#60a5fa">Stage 01</span>
+      <h2 class="stage-title">File Pickup</h2>
+      <p class="stage-subtitle" style="color:#60a5fa">Supplier SharePoint Integration</p>
       <p class="stage-desc">SYP files are automatically detected and retrieved from designated supplier SharePoint sites. Each supplier uploads their weekly SYP file to a dedicated folder, and our automation monitors these locations for new uploads every Thursday.</p>
-      <div class="stage-details">
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Monitors 10+ supplier SharePoint sites (Jabil Vietnam, Jabil Michigan, etc.)</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Detects new SYP file uploads via Power Automate triggers</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Validates file naming conventions before pickup (e.g., SYP_SupplierName_MMDDYYYY.xlsx)</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Logs pickup timestamp and source metadata for audit trail</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Sends automated acknowledgment to supplier on successful pickup</span></div>
-      </div>
+      <ul class="stage-details">
+        <li><span class="check" style="background:rgba(59,130,246,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Monitors 10+ supplier SharePoint sites (Jabil Vietnam, Jabil Michigan, etc.)</li>
+        <li><span class="check" style="background:rgba(59,130,246,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Detects new SYP file uploads via Power Automate triggers</li>
+        <li><span class="check" style="background:rgba(59,130,246,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Validates file naming conventions before pickup (e.g., SYP_SupplierName_MMDDYYYY.xlsx)</li>
+        <li><span class="check" style="background:rgba(59,130,246,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Logs pickup timestamp and source metadata for audit trail</li>
+        <li><span class="check" style="background:rgba(59,130,246,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Sends automated acknowledgment to supplier on successful pickup</li>
+      </ul>
     </div>
     <div class="stage-visual reveal-right">
-      <div class="glow"></div>
-      <div class="visual-card">
-        <div class="icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><path d="M2 10h20"/></svg>
+      <div class="glow" style="background:radial-gradient(circle,rgba(59,130,246,.15),transparent 70%)"></div>
+      <div class="stage-card" style="border-color:rgba(59,130,246,.2)">
+        <div style="display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
+          <div style="width:64px;height:64px;border-radius:16px;background:rgba(59,130,246,.12);display:flex;align-items:center;justify-content:center">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          </div>
         </div>
-        <div class="progress-bars">
-          <div class="progress-bar" style="--w:70%"><div class="fill"></div></div>
-          <div class="progress-bar" style="--w:80%"><div class="fill"></div></div>
-          <div class="progress-bar" style="--w:90%"><div class="fill"></div></div>
+        <div class="mini-excel s1-anim" id="excel1">
+          <div class="excel-titlebar">
+            <div class="dots"><span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span></div>
+            <span class="excel-filename">SYP_Jabil_06162026.xlsx</span>
+          </div>
+          <table class="excel-table">
+            <thead><tr><th>Part No.</th><th>Qty</th><th>CRD</th><th>Supplier</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr class="excel-row"><td>CX-4801A</td><td>1,200</td><td>06/20</td><td>Jabil VN</td><td>New</td></tr>
+              <tr class="excel-row"><td>CX-4802B</td><td>850</td><td>06/22</td><td>Jabil MI</td><td>New</td></tr>
+              <tr class="excel-row"><td>CX-4803C</td><td>2,400</td><td>06/25</td><td>Jabil VN</td><td>New</td></tr>
+              <tr class="excel-row"><td>CX-4804D</td><td>600</td><td>06/27</td><td>Jabil MI</td><td>New</td></tr>
+              <tr class="excel-row"><td>CX-4805E</td><td>3,100</td><td>06/30</td><td>Jabil VN</td><td>New</td></tr>
+            </tbody>
+          </table>
         </div>
-        <div class="status-dot"><div class="dot"></div><span>Process Active</span></div>
+        <div class="stage-status"><span class="pulse-dot"></span><span class="mono">Files detected — pickup initiated</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════ CONNECTOR 01→02 ═══════════════ -->
-<div class="flow-connector"><div class="connector-line" data-anim="line"></div><div class="connector-pill" data-anim="pill">Stage 01 → 02</div><div class="connector-chevron" data-anim="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></div></div>
+<!-- CONNECTOR 1→2 -->
+<div class="flow-connector" data-fc><div class="fc-line"></div><div class="fc-pill mono">Stage 01 → 02</div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
 
-<!-- ═══════════════ STAGE 02 ═══════════════ -->
-<section class="stage-section c-amber">
-  <div class="stage-grid order-swap">
-    <div class="stage-content reveal-right">
-      <span class="stage-badge">Stage 02</span>
-      <h2>Flow Processing</h2>
-      <p class="stage-subtitle">Power Automate Orchestration</p>
+<!-- ═══════════ STAGE 02 — FLOW PROCESSING ═══════════ -->
+<section class="stage-section" id="stage2" data-stage="2">
+  <div class="stage-grid">
+    <div class="stage-content reveal-left">
+      <span class="stage-badge" style="background:rgba(245,158,11,.15);color:#fbbf24">Stage 02</span>
+      <h2 class="stage-title">Flow Processing</h2>
+      <p class="stage-subtitle" style="color:#fbbf24">Power Automate Orchestration</p>
       <p class="stage-desc">Once picked up, the Power Automate flow orchestrates the entire processing pipeline — parsing the file, extracting key columns, applying transformations, and preparing the data for validation. The flow handles errors gracefully with retry logic and failure alerts.</p>
-      <div class="stage-details">
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Power Automate cloud flow triggers on file creation in SharePoint</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Extracts and parses Excel data using Office Scripts integration</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Applies column mapping and data type transformations</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Handles multi-sheet workbooks and dynamic column detection</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Retry logic with exponential backoff for transient failures</span></div>
-      </div>
+      <ul class="stage-details">
+        <li><span class="check" style="background:rgba(245,158,11,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Power Automate cloud flow triggers on file creation in SharePoint</li>
+        <li><span class="check" style="background:rgba(245,158,11,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Extracts and parses Excel data using Office Scripts integration</li>
+        <li><span class="check" style="background:rgba(245,158,11,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Applies column mapping and data type transformations</li>
+        <li><span class="check" style="background:rgba(245,158,11,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Handles multi-sheet workbooks and dynamic column detection</li>
+        <li><span class="check" style="background:rgba(245,158,11,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Retry logic with exponential backoff for transient failures</li>
+      </ul>
     </div>
-    <div class="stage-visual reveal-left">
-      <div class="glow"></div>
-      <div class="visual-card">
-        <div class="icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    <div class="stage-visual reveal-right">
+      <div class="glow" style="background:radial-gradient(circle,rgba(245,158,11,.15),transparent 70%)"></div>
+      <div class="stage-card" style="border-color:rgba(245,158,11,.2)">
+        <div style="display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
+          <div style="width:64px;height:64px;border-radius:16px;background:rgba(245,158,11,.12);display:flex;align-items:center;justify-content:center">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
         </div>
-        <div class="progress-bars">
-          <div class="progress-bar" style="--w:75%"><div class="fill"></div></div>
-          <div class="progress-bar" style="--w:85%"><div class="fill"></div></div>
-          <div class="progress-bar" style="--w:65%"><div class="fill"></div></div>
+        <div class="mini-excel s2-anim" id="excel2">
+          <div class="excel-titlebar">
+            <div class="dots"><span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span></div>
+            <span class="excel-filename">⚙ Processing...</span>
+          </div>
+          <table class="excel-table">
+            <thead><tr><th>Part No.</th><th>Qty</th><th>CRD</th><th>Supplier</th><th>Mapped</th></tr></thead>
+            <tbody>
+              <tr class="excel-row"><td>CX-4801A</td><td>1,200</td><td>06/20</td><td>Jabil VN</td><td style="color:#fbbf24">→ INT</td></tr>
+              <tr class="excel-row"><td>CX-4802B</td><td>850</td><td>06/22</td><td>Jabil MI</td><td style="color:#fbbf24">→ INT</td></tr>
+              <tr class="excel-row"><td>CX-4803C</td><td>2,400</td><td>06/25</td><td>Jabil VN</td><td style="color:#fbbf24">→ INT</td></tr>
+              <tr class="excel-row"><td>CX-4804D</td><td>600</td><td>06/27</td><td>Jabil MI</td><td style="color:#fbbf24">→ INT</td></tr>
+              <tr class="excel-row"><td>CX-4805E</td><td>3,100</td><td>06/30</td><td>Jabil VN</td><td style="color:#fbbf24">→ INT</td></tr>
+            </tbody>
+          </table>
         </div>
-        <div class="status-dot"><div class="dot"></div><span>Process Active</span></div>
+        <div class="stage-status"><span class="pulse-dot" style="background:#fbbf24"></span><span class="mono">Parsing & transforming columns</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════ CONNECTOR 02→03 ═══════════════ -->
-<div class="flow-connector"><div class="connector-line" data-anim="line"></div><div class="connector-pill" data-anim="pill">Stage 02 → 03</div><div class="connector-chevron" data-anim="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></div></div>
+<!-- CONNECTOR 2→3 -->
+<div class="flow-connector" data-fc><div class="fc-line"></div><div class="fc-pill mono">Stage 02 → 03</div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
 
-<!-- ═══════════════ STAGE 03 ═══════════════ -->
-<section class="stage-section c-emerald">
+<!-- ═══════════ STAGE 03 — VALIDATION ═══════════ -->
+<section class="stage-section" id="stage3" data-stage="3">
   <div class="stage-grid">
     <div class="stage-content reveal-left">
-      <span class="stage-badge">Stage 03</span>
-      <h2>Validation</h2>
-      <p class="stage-subtitle">AI-Powered Data Quality Checks</p>
+      <span class="stage-badge" style="background:rgba(16,185,129,.15);color:#34d399">Stage 03</span>
+      <h2 class="stage-title">Validation</h2>
+      <p class="stage-subtitle" style="color:#34d399">AI-Powered Data Quality Checks</p>
       <p class="stage-desc">Every SYP file goes through a comprehensive validation engine that checks for data integrity, completeness, and consistency. The validation agent compares current submissions against prior-day data to flag anomalies, missing fields, and format violations.</p>
-      <div class="stage-details">
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Checklist validations: required columns, data types, date formats</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Cross-reference with prior-day SYP data to detect discrepancies</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>CRD (Customer Request Date) vs Forecast shortage analysis</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Copilot Studio agent highlights validation failures with detailed reasons</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Alert system notifies supply planners of critical validation issues</span></div>
-      </div>
+      <ul class="stage-details">
+        <li><span class="check" style="background:rgba(16,185,129,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Checklist validations: required columns, data types, date formats</li>
+        <li><span class="check" style="background:rgba(16,185,129,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Cross-reference with prior-day SYP data to detect discrepancies</li>
+        <li><span class="check" style="background:rgba(16,185,129,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>CRD (Customer Request Date) vs Forecast shortage analysis</li>
+        <li><span class="check" style="background:rgba(16,185,129,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Copilot Studio agent highlights validation failures with detailed reasons</li>
+        <li><span class="check" style="background:rgba(16,185,129,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Alert system notifies supply planners of critical validation issues</li>
+      </ul>
     </div>
     <div class="stage-visual reveal-right">
-      <div class="glow"></div>
-      <div class="visual-card">
-        <div class="icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      <div class="glow" style="background:radial-gradient(circle,rgba(16,185,129,.15),transparent 70%)"></div>
+      <div class="stage-card" style="border-color:rgba(16,185,129,.2);position:relative">
+        <div class="validated-stamp" id="validatedStamp">VALIDATED</div>
+        <div style="display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
+          <div style="width:64px;height:64px;border-radius:16px;background:rgba(16,185,129,.12);display:flex;align-items:center;justify-content:center">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          </div>
         </div>
-        <div class="progress-bars">
-          <div class="progress-bar" style="--w:95%"><div class="fill"></div></div>
-          <div class="progress-bar" style="--w:88%"><div class="fill"></div></div>
-          <div class="progress-bar" style="--w:92%"><div class="fill"></div></div>
+        <div class="mini-excel" id="excel3">
+          <div class="excel-titlebar">
+            <div class="dots"><span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span></div>
+            <span class="excel-filename">🔍 Validating...</span>
+          </div>
+          <table class="excel-table">
+            <thead><tr><th>Part No.</th><th>Qty</th><th>CRD</th><th>Supplier</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr class="excel-row"><td>CX-4801A</td><td>1,200</td><td>06/20</td><td>Jabil VN</td><td><span class="val-mark" data-vd=".3s">✓ Pass</span></td></tr>
+              <tr class="excel-row"><td>CX-4802B</td><td>850</td><td>06/22</td><td>Jabil MI</td><td><span class="val-mark" data-vd=".6s">✓ Pass</span></td></tr>
+              <tr class="excel-row"><td>CX-4803C</td><td>2,400</td><td>06/25</td><td>Jabil VN</td><td><span class="val-mark val-warn" data-vd=".9s">⚠ Warn</span></td></tr>
+              <tr class="excel-row"><td>CX-4804D</td><td>600</td><td>06/27</td><td>Jabil MI</td><td><span class="val-mark" data-vd="1.2s">✓ Pass</span></td></tr>
+              <tr class="excel-row"><td>CX-4805E</td><td>3,100</td><td>06/30</td><td>Jabil VN</td><td><span class="val-mark" data-vd="1.5s">✓ Pass</span></td></tr>
+            </tbody>
+          </table>
         </div>
-        <div class="status-dot"><div class="dot"></div><span>Process Active</span></div>
+        <div class="stage-status"><span class="pulse-dot" style="background:#34d399"></span><span class="mono">4/5 passed · 1 warning</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════ CONNECTOR 03→04 ═══════════════ -->
-<div class="flow-connector"><div class="connector-line" data-anim="line"></div><div class="connector-pill" data-anim="pill">Stage 03 → 04</div><div class="connector-chevron" data-anim="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></div></div>
+<!-- CONNECTOR 3→4 -->
+<div class="flow-connector" data-fc><div class="fc-line"></div><div class="fc-pill mono">Stage 03 → 04</div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
 
-<!-- ═══════════════ STAGE 04 ═══════════════ -->
-<section class="stage-section c-purple">
-  <div class="stage-grid order-swap">
-    <div class="stage-content reveal-right">
-      <span class="stage-badge">Stage 04</span>
-      <h2>Snowflake Upload</h2>
-      <p class="stage-subtitle">Cloud Data Warehouse Ingestion</p>
-      <p class="stage-desc">Validated and cleansed SYP data is staged and loaded into Snowflake tables. The ingestion process uses structured staging areas, merge/upsert patterns, and maintains full version history for traceability and rollback capabilities.</p>
-      <div class="stage-details">
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Data staged in Snowflake internal stage before final load</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Merge logic ensures no duplicate records across daily uploads</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Version history maintained with load timestamps and batch IDs</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Automated Snowflake task triggers post-load transformations</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Dataset refresh triggers Power BI dashboard updates downstream</span></div>
-      </div>
-    </div>
-    <div class="stage-visual reveal-left">
-      <div class="glow"></div>
-      <div class="visual-card">
-        <div class="icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-        </div>
-        <div class="progress-bars">
-          <div class="progress-bar" style="--w:80%"><div class="fill"></div></div>
-          <div class="progress-bar" style="--w:70%"><div class="fill"></div></div>
-          <div class="progress-bar" style="--w:90%"><div class="fill"></div></div>
-        </div>
-        <div class="status-dot"><div class="dot"></div><span>Process Active</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════ CONNECTOR 04→05 ═══════════════ -->
-<div class="flow-connector"><div class="connector-line" data-anim="line"></div><div class="connector-pill" data-anim="pill">Stage 04 → 05</div><div class="connector-chevron" data-anim="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></div></div>
-
-<!-- ═══════════════ STAGE 05 ═══════════════ -->
-<section class="stage-section c-cyan">
+<!-- ═══════════ STAGE 04 — SNOWFLAKE UPLOAD ═══════════ -->
+<section class="stage-section" id="stage4" data-stage="4">
   <div class="stage-grid">
     <div class="stage-content reveal-left">
-      <span class="stage-badge">Stage 05</span>
-      <h2>Dashboards &amp; Alerts</h2>
-      <p class="stage-subtitle">Downstream Analytics &amp; Monitoring</p>
-      <p class="stage-desc">Once data lands in Snowflake, downstream Power BI dashboards are refreshed automatically. Supply planners and procurement teams get real-time visibility into supplier yield plans, backlog, and potential shortages — with automated email alerts on refresh failures.</p>
-      <div class="stage-details">
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Power BI dashboards refresh via scheduled triggers post-Snowflake load</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Shipment &amp; Backlog Dashboard, Universal Dashboard, Validation Dashboard</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Power Automate alerts dataset owners on refresh failures</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Weekly SYP summary emails sent to stakeholders automatically</span></div>
-        <div class="stage-detail"><div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><span>Audit trail dashboard tracks file lifecycle from pickup to load</span></div>
-      </div>
+      <span class="stage-badge" style="background:rgba(139,92,246,.15);color:#a78bfa">Stage 04</span>
+      <h2 class="stage-title">Snowflake Upload</h2>
+      <p class="stage-subtitle" style="color:#a78bfa">Cloud Data Warehouse Ingestion</p>
+      <p class="stage-desc">Validated and cleansed SYP data is staged and loaded into Snowflake tables. The ingestion process uses structured staging areas, merge/upsert patterns, and maintains full version history for traceability and rollback capabilities.</p>
+      <ul class="stage-details">
+        <li><span class="check" style="background:rgba(139,92,246,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Data staged in Snowflake internal stage before final load</li>
+        <li><span class="check" style="background:rgba(139,92,246,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Merge logic ensures no duplicate records across daily uploads</li>
+        <li><span class="check" style="background:rgba(139,92,246,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Version history maintained with load timestamps and batch IDs</li>
+        <li><span class="check" style="background:rgba(139,92,246,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Automated Snowflake task triggers post-load transformations</li>
+        <li><span class="check" style="background:rgba(139,92,246,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Dataset refresh triggers Power BI dashboard updates downstream</li>
+      </ul>
     </div>
     <div class="stage-visual reveal-right">
-      <div class="glow"></div>
-      <div class="visual-card">
-        <div class="icon-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <div class="glow" style="background:radial-gradient(circle,rgba(139,92,246,.15),transparent 70%)"></div>
+      <div class="stage-card" style="border-color:rgba(139,92,246,.2);position:relative">
+        <div class="data-particles" id="particles4"></div>
+        <div style="display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
+          <div style="width:64px;height:64px;border-radius:16px;background:rgba(139,92,246,.12);display:flex;align-items:center;justify-content:center">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
         </div>
-        <div class="progress-bars">
-          <div class="progress-bar" style="--w:85%"><div class="fill"></div></div>
-          <div class="progress-bar" style="--w:92%"><div class="fill"></div></div>
-          <div class="progress-bar" style="--w:78%"><div class="fill"></div></div>
+        <div class="mini-excel s4-anim" id="excel4">
+          <div class="excel-titlebar">
+            <div class="dots"><span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span></div>
+            <span class="excel-filename">↑ Uploading to Snowflake...</span>
+          </div>
+          <table class="excel-table">
+            <thead><tr><th>Part No.</th><th>Qty</th><th>CRD</th><th>Supplier</th><th>Batch</th></tr></thead>
+            <tbody>
+              <tr class="excel-row"><td>CX-4801A</td><td>1,200</td><td>06/20</td><td>Jabil VN</td><td style="color:#a78bfa">#B-2461</td></tr>
+              <tr class="excel-row"><td>CX-4802B</td><td>850</td><td>06/22</td><td>Jabil MI</td><td style="color:#a78bfa">#B-2461</td></tr>
+              <tr class="excel-row"><td>CX-4803C</td><td>2,400</td><td>06/25</td><td>Jabil VN</td><td style="color:#a78bfa">#B-2461</td></tr>
+              <tr class="excel-row"><td>CX-4804D</td><td>600</td><td>06/27</td><td>Jabil MI</td><td style="color:#a78bfa">#B-2461</td></tr>
+              <tr class="excel-row"><td>CX-4805E</td><td>3,100</td><td>06/30</td><td>Jabil VN</td><td style="color:#a78bfa">#B-2461</td></tr>
+            </tbody>
+          </table>
         </div>
-        <div class="status-dot"><div class="dot"></div><span>Process Active</span></div>
+        <div class="stage-status"><span class="pulse-dot" style="background:#a78bfa"></span><span class="mono">Streaming to warehouse</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════ TECH STACK ═══════════════ -->
+<!-- CONNECTOR 4→5 -->
+<div class="flow-connector" data-fc><div class="fc-line"></div><div class="fc-pill mono">Stage 04 → 05</div><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+
+<!-- ═══════════ STAGE 05 — DASHBOARDS ═══════════ -->
+<section class="stage-section" id="stage5" data-stage="5">
+  <div class="stage-grid">
+    <div class="stage-content reveal-left">
+      <span class="stage-badge" style="background:rgba(6,182,212,.15);color:#22d3ee">Stage 05</span>
+      <h2 class="stage-title">Dashboards &amp; Alerts</h2>
+      <p class="stage-subtitle" style="color:#22d3ee">Downstream Analytics &amp; Monitoring</p>
+      <p class="stage-desc">Once data lands in Snowflake, downstream Power BI dashboards are refreshed automatically. Supply planners and procurement teams get real-time visibility into supplier yield plans, backlog, and potential shortages — with automated email alerts on refresh failures.</p>
+      <ul class="stage-details">
+        <li><span class="check" style="background:rgba(6,182,212,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Power BI dashboards refresh via scheduled triggers post-Snowflake load</li>
+        <li><span class="check" style="background:rgba(6,182,212,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Shipment &amp; Backlog Dashboard, Universal Dashboard, Validation Dashboard</li>
+        <li><span class="check" style="background:rgba(6,182,212,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Power Automate alerts dataset owners on refresh failures</li>
+        <li><span class="check" style="background:rgba(6,182,212,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Weekly SYP summary emails sent to stakeholders automatically</li>
+        <li><span class="check" style="background:rgba(6,182,212,.15)"><svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>Audit trail dashboard tracks file lifecycle from pickup to load</li>
+      </ul>
+    </div>
+    <div class="stage-visual reveal-right">
+      <div class="glow" style="background:radial-gradient(circle,rgba(6,182,212,.15),transparent 70%)"></div>
+      <div class="stage-card" style="border-color:rgba(6,182,212,.2)">
+        <div style="display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
+          <div style="width:64px;height:64px;border-radius:16px;background:rgba(6,182,212,.12);display:flex;align-items:center;justify-content:center">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+        </div>
+        <div id="excel5Container">
+          <div class="mini-excel" id="excel5" style="transition:opacity .8s,transform .8s">
+            <div class="excel-titlebar">
+              <div class="dots"><span style="background:#ef4444"></span><span style="background:#f59e0b"></span><span style="background:#22c55e"></span></div>
+              <span class="excel-filename">📊 Generating dashboards...</span>
+            </div>
+            <!-- Chart bars appear here -->
+            <div class="chart-container" id="chartBars">
+              <div class="chart-bar"></div><div class="chart-bar"></div><div class="chart-bar"></div>
+              <div class="chart-bar"></div><div class="chart-bar"></div><div class="chart-bar"></div>
+            </div>
+            <div class="chart-labels" id="chartLabels">
+              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+            </div>
+            <div class="mini-line-chart" id="lineChart">
+              <svg viewBox="0 0 300 40" preserveAspectRatio="none">
+                <polyline class="line-path" points="0,35 50,28 100,15 150,22 200,8 250,18 300,5" fill="none" stroke="#22d3ee" stroke-width="2"/>
+                <polyline class="line-path" points="0,30 50,35 100,25 150,30 200,20 250,28 300,15" fill="none" stroke="rgba(6,182,212,.3)" stroke-width="1.5" style="stroke-dasharray:200;stroke-dashoffset:200;transition-delay:.8s"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="stage-status"><span class="pulse-dot" style="background:#22d3ee"></span><span class="mono">Dashboards refreshed</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ TECH STACK ═══════════ -->
 <section class="tech-section">
-  <div class="section-title reveal" style="text-align:center;margin-bottom:60px">
-    <h2 style="font-size:clamp(1.8rem,4vw,2.5rem);font-weight:700;margin-bottom:12px">Technology Stack</h2>
-    <p style="color:#6b7280;max-width:480px;margin:0 auto">The tools powering the SYP automation pipeline.</p>
+  <div class="reveal">
+    <h2>Technology Stack</h2>
+    <p class="sub">The tools powering the SYP automation pipeline.</p>
   </div>
   <div class="tech-grid">
-    <div class="glow-card reveal-scale" style="transition-delay:.05s"><div class="glow-bg"></div><div class="card-inner">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    <div class="tech-card reveal" style="transition-delay:.05s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       <h4>Power Automate</h4><p>Flow orchestration &amp; triggers</p>
-    </div></div>
-    <div class="glow-card reveal-scale" style="transition-delay:.12s"><div class="glow-bg"></div><div class="card-inner">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="m9 15 2 2 4-4"/></svg>
+    </div>
+    <div class="tech-card reveal" style="transition-delay:.1s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       <h4>Office Scripts</h4><p>Excel parsing &amp; validation</p>
-    </div></div>
-    <div class="glow-card reveal-scale" style="transition-delay:.19s"><div class="glow-bg"></div><div class="card-inner">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    </div>
+    <div class="tech-card reveal" style="transition-delay:.15s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
       <h4>Copilot Studio</h4><p>AI validation agent</p>
-    </div></div>
-    <div class="glow-card reveal-scale" style="transition-delay:.26s"><div class="glow-bg"></div><div class="card-inner">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+    </div>
+    <div class="tech-card reveal" style="transition-delay:.2s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
       <h4>Snowflake</h4><p>Cloud data warehouse</p>
-    </div></div>
-    <div class="glow-card reveal-scale" style="transition-delay:.33s"><div class="glow-bg"></div><div class="card-inner">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    </div>
+    <div class="tech-card reveal" style="transition-delay:.25s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       <h4>Power BI</h4><p>Dashboard &amp; reporting</p>
-    </div></div>
-    <div class="glow-card reveal-scale" style="transition-delay:.4s"><div class="glow-bg"></div><div class="card-inner">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+    </div>
+    <div class="tech-card reveal" style="transition-delay:.3s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>
       <h4>SharePoint</h4><p>Supplier file hosting</p>
-    </div></div>
-    <div class="glow-card reveal-scale" style="transition-delay:.47s"><div class="glow-bg"></div><div class="card-inner">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </div>
+    <div class="tech-card reveal" style="transition-delay:.35s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       <h4>MS Teams</h4><p>Alert notifications</p>
-    </div></div>
-    <div class="glow-card reveal-scale" style="transition-delay:.54s"><div class="glow-bg"></div><div class="card-inner">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+    </div>
+    <div class="tech-card reveal" style="transition-delay:.4s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
       <h4>Python</h4><p>Advanced data processing</p>
-    </div></div>
+    </div>
   </div>
 </section>
 
-<!-- ═══════════════ IMPACT ═══════════════ -->
+<!-- ═══════════ IMPACT ═══════════ -->
 <section class="impact-section">
-  <div class="section-title reveal" style="text-align:center;margin-bottom:60px">
-    <h2 style="font-size:clamp(1.8rem,4vw,2.5rem);font-weight:700;margin-bottom:12px">Impact &amp; Results</h2>
-    <p style="color:#6b7280;max-width:480px;margin:0 auto">Measurable improvements since pipeline deployment.</p>
+  <div class="reveal">
+    <h2>Impact &amp; Results</h2>
+    <p class="sub">Measurable improvements since pipeline deployment.</p>
   </div>
   <div class="impact-grid">
-    <div class="glow-card impact-card reveal-scale" style="transition-delay:.1s"><div class="glow-bg"></div><div class="card-inner">
-      <div class="impact-value" style="background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;background-clip:text"><span class="counter" data-end="90">0</span>%</div>
-      <h4>Reduction in Manual Effort</h4><p>From 2–3 days of manual processing to under 6 hours fully automated.</p>
-    </div></div>
-    <div class="glow-card impact-card reveal-scale" style="transition-delay:.25s"><div class="glow-bg"></div><div class="card-inner">
-      <div class="impact-value" style="background:linear-gradient(135deg,var(--emerald),#14b8a6);-webkit-background-clip:text;background-clip:text"><span class="counter" data-end="100">0</span>%</div>
-      <h4>File Traceability</h4><p>Every file tracked from supplier upload to Snowflake ingestion with full audit logs.</p>
-    </div></div>
-    <div class="glow-card impact-card reveal-scale" style="transition-delay:.4s"><div class="glow-bg"></div><div class="card-inner">
-      <div class="impact-value" style="background:linear-gradient(135deg,var(--purple),#ec4899);-webkit-background-clip:text;background-clip:text"><span class="counter" data-end="0">0</span></div>
-      <h4>Missed Upload Alerts</h4><p>Automated monitoring ensures no supplier file goes unprocessed or unnoticed.</p>
-    </div></div>
+    <div class="impact-card reveal" style="transition-delay:.1s">
+      <div class="impact-value" style="background:linear-gradient(90deg,#3b82f6,#22d3ee);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent"><span class="counter" data-end="90">0</span>%</div>
+      <div class="impact-label">Reduction in Manual Effort</div>
+      <div class="impact-desc">From 2–3 days of manual processing to under 6 hours fully automated.</div>
+    </div>
+    <div class="impact-card reveal" style="transition-delay:.2s">
+      <div class="impact-value" style="background:linear-gradient(90deg,#10b981,#2dd4bf);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent"><span class="counter" data-end="100">0</span>%</div>
+      <div class="impact-label">File Traceability</div>
+      <div class="impact-desc">Every file tracked from supplier upload to Snowflake ingestion with full audit logs.</div>
+    </div>
+    <div class="impact-card reveal" style="transition-delay:.3s">
+      <div class="impact-value" style="background:linear-gradient(90deg,#8b5cf6,#ec4899);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent"><span class="counter" data-end="0">0</span></div>
+      <div class="impact-label">Missed Upload Alerts</div>
+      <div class="impact-desc">Automated monitoring ensures no supplier file goes unprocessed or unnoticed.</div>
+    </div>
   </div>
 </section>
 
-<!-- ═══════════════ FOOTER ═══════════════ -->
+<!-- ═══════════ FOOTER ═══════════ -->
 <footer>
   <p>SYP Automation Pipeline Documentation</p>
   <p class="mono">Built by Business Analytics Team · Calix · 2026</p>
 </footer>
 
-<!-- ═══════════════ JAVASCRIPT ═══════════════ -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
 <script>
-(function(){
-  // ── Particles ──
-  const pc=document.getElementById('particles');
-  for(let i=0;i<40;i++){
-    const p=document.createElement('div');
-    p.className='particle';
-    const s=Math.random()*3+1;
-    p.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${s}px;height:${s}px;--d:${Math.random()*20+15}s;--del:${Math.random()*10}s`;
+// ─── PARTICLES ───
+(function(){const c=document.getElementById('particles');for(let i=0;i<40;i++){const p=document.createElement('div');p.className='particle';const s=Math.random()*3+1;p.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${s}px;height:${s}px;animation:floatP ${Math.random()*20+15}s ${Math.random()*10}s infinite ease-in-out`;c.appendChild(p)}})();
+
+// ─── SCROLL PROGRESS ───
+window.addEventListener('scroll',()=>{const h=document.documentElement;const pct=h.scrollTop/(h.scrollHeight-h.clientHeight)*100;document.getElementById('scrollProgress').style.width=pct+'%'});
+
+// ─── PARALLAX HERO ───
+const hero=document.getElementById('hero');
+window.addEventListener('scroll',()=>{const r=hero.getBoundingClientRect();const pct=Math.min(1,Math.max(0,-r.top/r.height));const inner=hero.querySelector('.reveal');if(inner){inner.style.transform=`translateY(${pct*120}px) scale(${1-pct*.1})`;inner.style.opacity=1-pct*1.2}});
+
+// ─── INTERSECTION OBSERVER — REVEALS ───
+const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('active')})},{threshold:.15,rootMargin:'-50px'});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale').forEach(el=>obs.observe(el));
+
+// ─── ANIMATED COUNTERS ───
+const cObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(!e.isIntersecting)return;const el=e.target;const end=parseInt(el.dataset.end);if(end===0){el.textContent='0';cObs.unobserve(el);return}let cur=0;const step=Math.max(1,Math.ceil(end/60));const iv=setInterval(()=>{cur+=step;if(cur>=end){cur=end;clearInterval(iv)}el.textContent=cur},30);cObs.unobserve(el)})},{threshold:.5});
+document.querySelectorAll('.counter').forEach(el=>cObs.observe(el));
+
+// ─── FLOW CONNECTORS ───
+const fcObs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.querySelector('.fc-line').classList.add('active');e.target.querySelector('.fc-pill').classList.add('active')}})},{threshold:.3});
+document.querySelectorAll('.flow-connector').forEach(el=>fcObs.observe(el));
+
+// ─── JOURNEY TRACKER ───
+const stageSections=[1,2,3,4,5].map(n=>document.getElementById('stage'+n));
+function updateJourney(){
+  let activeStage=0;
+  stageSections.forEach((s,i)=>{
+    if(!s)return;
+    const r=s.getBoundingClientRect();
+    if(r.top<window.innerHeight*.6 && r.bottom>window.innerHeight*.3) activeStage=i+1;
+  });
+  for(let i=1;i<=5;i++){
+    const dot=document.getElementById('jd'+i);
+    if(i<=activeStage)dot.classList.add('active');else dot.classList.remove('active');
+  }
+  for(let i=1;i<=4;i++){
+    const con=document.getElementById('jc'+i);
+    if(i<activeStage)con.classList.add('active');else con.classList.remove('active');
+  }
+}
+window.addEventListener('scroll',updateJourney);
+
+// ─── STAGE 1: ROWS SLIDE IN ───
+const s1Obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('#excel1 .excel-row').forEach(r=>r.classList.add('show'));s1Obs.unobserve(e.target)}})},{threshold:.3});
+s1Obs.observe(document.getElementById('excel1'));
+
+// ─── STAGE 2: SCAN + SLIDE IN ───
+const s2Obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('#excel2 .excel-row').forEach(r=>r.classList.add('show'));s2Obs.unobserve(e.target)}})},{threshold:.3});
+s2Obs.observe(document.getElementById('excel2'));
+
+// ─── STAGE 3: VALIDATION MARKS ───
+const s3Obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){
+  const rows=document.querySelectorAll('#excel3 .excel-row');
+  rows.forEach(r=>{r.classList.add('show');r.style.opacity='1';r.style.transform='translateX(0)'});
+  const marks=document.querySelectorAll('#excel3 .val-mark');
+  marks.forEach((m,i)=>{setTimeout(()=>m.classList.add('show'),300+i*300)});
+  setTimeout(()=>document.getElementById('validatedStamp').classList.add('show'),2200);
+  s3Obs.unobserve(e.target)
+}})},{threshold:.3});
+s3Obs.observe(document.getElementById('excel3'));
+
+// ─── STAGE 4: DISSOLVE + PARTICLES ───
+const s4Obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){
+  const container=document.getElementById('excel4');
+  const rows=container.querySelectorAll('.excel-row');
+  // First show rows
+  rows.forEach(r=>{r.classList.add('show');r.style.opacity='1';r.style.transform='translateX(0)'});
+  // Create particles
+  const pc=document.getElementById('particles4');
+  for(let i=0;i<20;i++){
+    const p=document.createElement('div');p.className='data-particle';
+    p.style.cssText=`left:${10+Math.random()*80}%;bottom:${Math.random()*40}%;--px:${(Math.random()-0.5)*60}px;animation-delay:${0.8+Math.random()*1.2}s`;
     pc.appendChild(p);
   }
+  // Dissolve rows after delay
+  setTimeout(()=>{container.classList.add('triggered');rows.forEach(r=>r.classList.add('dissolve'))},800);
+  s4Obs.unobserve(e.target)
+}})},{threshold:.3});
+s4Obs.observe(document.getElementById('excel4'));
 
-  // ── Scroll Progress ──
-  const bar=document.getElementById('scroll-progress');
-  window.addEventListener('scroll',()=>{
-    const h=document.documentElement.scrollHeight-window.innerHeight;
-    bar.style.width=(window.scrollY/h*100)+'%';
-  },{passive:true});
-
-  // ── Hero Parallax ──
-  const heroInner=document.getElementById('hero-inner');
-  const hero=document.getElementById('hero');
-  window.addEventListener('scroll',()=>{
-    const r=hero.getBoundingClientRect();
-    const p=Math.max(0,Math.min(1,-r.top/(r.height)));
-    heroInner.style.transform=`translateY(${p*200}px) scale(${1-p*0.1})`;
-    heroInner.style.opacity=1-p*1.5;
-  },{passive:true});
-
-  // ── Intersection Observer for reveals ──
-  const obs=new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
-  },{threshold:0.1,rootMargin:'-50px'});
-  document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale').forEach(el=>obs.observe(el));
-
-  // ── Progress Bars ──
-  const barObs=new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');barObs.unobserve(e.target)}});
-  },{threshold:0.3});
-  document.querySelectorAll('.progress-bar').forEach(el=>barObs.observe(el));
-
-  // ── Connectors ──
-  const connObs=new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        const c=e.target;
-        const line=c.querySelector('[data-anim="line"]');
-        const pill=c.querySelector('[data-anim="pill"]');
-        const chev=c.querySelector('[data-anim="chev"]');
-        if(line){line.classList.add('visible');line.style.height='80px'}
-        if(pill)pill.classList.add('visible');
-        if(chev)chev.classList.add('visible');
-        connObs.unobserve(c);
-      }
-    });
-  },{threshold:0.5});
-  document.querySelectorAll('.flow-connector').forEach(el=>connObs.observe(el));
-
-  // ── Animated Counters ──
-  const counterObs=new IntersectionObserver((entries)=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        const el=e.target;
-        const end=parseInt(el.dataset.end);
-        if(end===0){el.textContent='0';counterObs.unobserve(el);return}
-        let cur=0;const step=Math.max(1,end/120);
-        const timer=setInterval(()=>{
-          cur+=step;
-          if(cur>=end){el.textContent=end;clearInterval(timer)}
-          else el.textContent=Math.floor(cur);
-        },1000/60);
-        counterObs.unobserve(el);
-      }
-    });
-  },{threshold:0.5});
-  document.querySelectorAll('.counter').forEach(el=>counterObs.observe(el));
-})();
+// ─── STAGE 5: CHART MORPH ───
+const s5Obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){
+  document.getElementById('chartBars').classList.add('show');
+  document.getElementById('chartLabels').classList.add('show');
+  document.getElementById('lineChart').classList.add('show');
+  s5Obs.unobserve(e.target)
+}})},{threshold:.3});
+s5Obs.observe(document.getElementById('excel5'));
 </script>
 </body>
 </html>
